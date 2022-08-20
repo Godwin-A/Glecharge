@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buy electricity with glecharge</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A=="   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  
+  <form action="/merchant/data" method="post">
+    <input type="tel" name="meter_number" id="meter_number" placeholder="put meter number here">
+    <label for="type">select meter type here</label>
+   <select name="type" id="type">
+    <option value="prepaid"> Prepaid</option>
+    <option value="postpaid"> Postpaid</option>
+   </select>
+
+   <label for="service_id">Region</label>
+   <select name="service_id" id="service_id">
+    <option value="abuja-electric"> Abuja Electric </option>
+   </select>
+
+    <button type="submit"> buy power here </button>
+  </form>
+  <script src="../public/script/power.js" ></script>
+</body>
+</html>
