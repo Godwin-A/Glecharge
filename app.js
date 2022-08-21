@@ -16,7 +16,7 @@ app.set('view engine', 'ejs')
 app.use('/public', express.static('public'));
 mongoose.connect('mongodb+srv://Glecharge:itsmine@glecharge.ybbbk.mongodb.net/glechargeretryWrites=true&w=majority')
 .then(()=>{ console.log('DB connected successfully') })
-.catch((err)=>{console.log(err)})      
+.catch((err)=>{console.log(err)})   
 
  
 // app.get('/home', (req, res)=>{
@@ -179,9 +179,23 @@ app.get('/data/approved', async (req, res)=>{
            const payerOne = new Payer(payerDetails)
         await payerOne.save()
            if(payerOne){
+            const min = 10000;
+const max = 99999;
+const num = Math.floor(Math.random() * (max - min + 1)) + min;
+const date = new Date()
+const year = date.getFullYear();
+const month = `${(date.getMonth() + 1) < 10 ? '0' : ''}${date.getMonth() + 1}`;
+const hour = `${date.getHours() < 10 ? '0' : ''}${date.getHours()}`
+const seconds = `${date.getSeconds() < 10 ? '0' : ''}${date.getSeconds()}`;
+const minutes =`${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`;
+const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
+const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`
             let phone = Number(payerDetails.number)
            // console.log(requestId,Meter_Type, MeterNumber,payerDetails.amount,service_id, payerDetails.number)
-           buy_electricity(requestId,variation_code, MeterNumber,payerDetails.amount,service_id, payerDetails.number)
+        const result = await buy_electricity(requestId,variation_code, MeterNumber,payerDetails.amount,service_id, payerDetails.number)
+        const token = result.Token
+        console.log(token)
+          res.render('show_token', {token})
            }else{
              console.log('there was an error')
            }
@@ -192,7 +206,44 @@ app.get('/data/approved', async (req, res)=>{
  })
 
 
+app.get('/tv_subscription', async(req, res)=>{
+      res.render('tv')
+})
 
+
+app.post('/verify_smartcard', async(req, res)=>{
+  const { card,  serviceID} = req.body
+  const options = {
+   headers: {
+ 'Authorization':'Basic '+btoa('sandbox@vtpass.com:sandbox'),
+ 'Content-Type': 'application/json'                   
+          },
+  method: "POST",
+ body: JSON.stringify({         
+    'serviceID': serviceID,
+    'billersCode': card,
+ })
+ }
+ const result = await fetch(new URL("https://sandbox.vtpass.com/api/merchant-verify"), options)
+  if(result){
+      try {
+        //humor makes coding more fun :)
+       console.log('there is a result , hurray!!!!!')
+    const json = await result.json().then(res => {return res})
+    console.log(json)
+       const {Customer_Name, Customer_Type, DUE_DATE , Customer_Number} = json.content
+  res.render('buy_tv', {Customer_Name, Customer_Type, DUE_DATE,Customer_Number, serviceID})
+         } catch (error) {
+           console.log(`there was an error ${error}`)
+         }
+        }
+})
+//fetch(new URL("https://sandbox.vtpass.com/api/service-variations?serviceID=dstv"))
+//.then(res => res.json())
+//.then(json => console.log(json.content.varations))
+
+
+//app.get('')
 
 
 
