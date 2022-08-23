@@ -7,16 +7,34 @@
   <title>Document</title>
 </head>
 <body>
+  <h1 id="h1"></h1>
  <div>
   <form action="">
     <script src="https://checkout.flutterwave.com/v3.js"></script>
-    <input type="tel"  id="Customer_Name" value=" <%=Customer_Number %>">
+    <input type="tel"  id="Customer_Name" value=" <%=Customer_Name %>">
+    <input type="tel"  id="Customer_Number" value="1212121212">
     <input type="text" name="Customer_Type" id="Customer_Type" value=" <%=Customer_Type %>">
-    <input type="text" name="serviceID"  id="serviceID" value=" <%=serviceID %>" hidden>
-    <select name="variation_code" id="variation_code">
-      <option value="dstv-padi">DStv Padi N1,850 </option>
-      <option value="dstv-yanga">DStv Yanga N2,565 </option>
-      <option value="dstv-confam">Dstv Confam N4,615 </option>
+    <input type="text" name="serviceID"  id="serviceID" onblur="value()" value="<%=serviceID %>" hidden>
+    <!-- <select name="tv_operators" id="tv_operators">
+      <option value="dstv">DStv  </option>
+      <option value="gotv">GOtv </option>
+      <option value="startimes">STARTIMES </option>
+    </select> -->
+    <label for="plans"> choose a planned package </label>
+    <select  id="plans">
+      <optgroup id="dstv_plans" label="DSTV plans" hidden>
+        <!-- placeholder values -->
+        <option value="dstv-padi" amount="1850">Dstv 2000</option>
+        <option value="dstv-yanga" amount="2565">Dstv 3000 </option>  
+        <option value="dstv-confam"  amount="4615">Dstv 4000</option>
+      </optgroup>
+      <optgroup id="gotv_plans" label="GOTV plans" hidden>
+        <option value="gotv-lite">GOtv Lite N410</option>
+        <option value="gotv-max">GOtv Max N3,600</option>
+      </optgroup>
+      <optgroup id="star_plans" label="STAR plans" hidden>
+        <option value="star 1000"> star 1000</option>
+      </optgroup>
     </select>
     <input type="tel" name="phone" id="phone" placeholder="phone number please :)">
     <input type="email" name="email" id="email" placeholder="email here please :)">
@@ -24,30 +42,41 @@
   </form>
  </div>
 </body>
+<script src="../public/script/buy_tv.js" ></script>
+<script>
+// function value(){
+//   if(this.value == 'dstv'){
+//         alert('well the value was dstv')
+//   }
+// }
+
+</script>
 </html>
 <script>
   function makePayment() {
     const phone_number = document.getElementById('phone').value
     const email = document.getElementById('email').value
     const name = document.getElementById('Customer_Name').value
-    const sel = document.getElementById('network')
-    const sel_value = sel.value
+    const Customer_Number = document.getElementById('Customer_Number').value
+    const sel = document.getElementById('plans')
+    const variation_code = sel.value
     const selected = sel.options[sel.selectedIndex];
     const selected_value = selected.text
-    const variation_code =  selected.getAttribute('variation_code');
-    const service_id = document.getElementById('operators').value
+    const amount =  selected.getAttribute('amount');
+    const service_id = document.getElementById('serviceID').value
     FlutterwaveCheckout({
       public_key: "FLWPUBK_TEST-8e6858868683e5fb3e1eda62f8b77765-X",
       tx_ref: Date.now(),
-      amount:sel_value,
+      amount,
       currency: "NGN",
       country: "NG",
       payment_options: "card",
-      redirect_url: "http://localhost:5000/data/approved",
+      redirect_url: "http://localhost:5000/buy_tv",
       meta: {
     variation_code,
     selected_value,
-    service_id
+    service_id,
+    Customer_Number
   },
       customer: {
         email,
@@ -61,8 +90,8 @@
         // close modal
       },
       customizations: {
-        title: "Pay for your Airtime Here",
-        description: "Airtime Payment",
+        title: "Pay for your tv here ",
+        description: "tv payment here Payment",
         logo: "https://cdn.iconscout.com/icon/premium/png-256-thumb/payment-2193968-1855546.png",
       },
     });
