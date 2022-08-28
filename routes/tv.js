@@ -5,13 +5,13 @@ const btoa = require('btoa');
 const axios = require('axios').default;
 const mongoose = require('mongoose');
 const Payer = require('../models/payer');
+const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 
-
-router.get('/tv_subscription', async (req, res) => {
+router.get('/tv_subscription', ensureAuthenticated,async (req, res) => {
   res.render('tv');
 });
 
-router.post('/verify_smartcard', async (req, res) => {
+router.post('/verify_smartcard', ensureAuthenticated,async (req, res) => {
   const { card, serviceID } = req.body;
   const options = {
     headers: {
@@ -54,7 +54,7 @@ router.post('/verify_smartcard', async (req, res) => {
 // .then(res => res.json())
 // .then(json => console.log(json.content.varations))
 
-router.get('/buy_tv', async(req, res)=>{
+router.get('/buy_tv',ensureAuthenticated, async(req, res)=>{
   const { transaction_id } = req.query;
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
   const response = await axios({

@@ -7,13 +7,13 @@ const Payer = require('../models/payer');
 const btoa = require('btoa')
 const buy_pin = require('../utils/jamb')
 const fetch =  require('node-fetch');
-
+const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 router.get('/get-jamb', (req, res)=>{
   res.render('jamb')
 })
 
 
-router.post('/jamb/verify', async(req, res)=>{
+router.post('/jamb/verify', ensureAuthenticated,async(req, res)=>{
   const {billersCode , serviceID , type } = req.body
   const optionss = {
     headers: {
@@ -41,7 +41,7 @@ router.post('/jamb/verify', async(req, res)=>{
 
 
 
-router.get('/jamb/confirmation', async(req, res)=>{
+router.get('/jamb/confirmation', ensureAuthenticated,async(req, res)=>{
   const { transaction_id } = req.query;
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
   const response = await axios({
@@ -87,7 +87,7 @@ router.get('/jamb/confirmation', async(req, res)=>{
         }${date.getMinutes()}`;
         const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
         const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`;
-        res.send(`you have been saved to the database ${payerOne.full_name}`);
+        res.send(`transaction successful ${payerOne.full_name}`);
     const pin = await buy_pin(requestId, variation_code, service_id,billersCode, payerDetails.number);
     console.log(pin.Pin)
       } else {

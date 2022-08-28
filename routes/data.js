@@ -4,15 +4,16 @@ const buy_data = require('../utils/data');
 const axios = require('axios').default;
 const mongoose = require('mongoose');
 const Payer = require('../models/payer');
+const flash = require('connect-flash');
+const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 
-
-router.get('/data', (req, res) => {
+router.get('/data', ensureAuthenticated, (req, res) => {
   res.render('data');
 });
 
 
 // buy data route
-router.get('/data/approved', async (req, res) => {
+router.get('/data/approved',ensureAuthenticated, async (req, res) => {
   const { transaction_id } = req.query;
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
   const response = await axios({
@@ -60,7 +61,7 @@ router.get('/data/approved', async (req, res) => {
         }${date.getMinutes()}`;
         const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
         const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`;
-        res.send(`you have been saved to the database ${payerOne.full_name}`);
+        res.send(`transaction successful ${payerOne.full_name}`);
         buy_data(requestId, variation_code, service_id, payerDetails.number);
       } else {
         console.log('there was an error');

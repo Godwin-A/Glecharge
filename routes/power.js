@@ -6,9 +6,10 @@ const axios = require('axios').default;
 const mongoose = require('mongoose');
 const Payer = require('../models/payer');
 const fetch =  require('node-fetch');
+const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 
 // electricity route
-router.get('/merchant/verify', function (req, res) {
+router.get('/merchant/verify',ensureAuthenticated, function (req, res) {
   res.render('power');
 });
 
@@ -52,7 +53,7 @@ router.post('/merchant/data', async (req, res) => {
   }
 });
 
-router.get('/buy_electricity', async (req, res) => {
+router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
   const { transaction_id } = req.query;
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
   const response = await axios({

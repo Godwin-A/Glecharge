@@ -4,15 +4,16 @@ const router = express.Router()
 const axios = require('axios').default;
 const mongoose = require('mongoose');
 const Payer = require('../models/payer');
+const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 
-router.get('/airtime', (req, res) => {
+router.get('/airtime', ensureAuthenticated,  (req, res) => {
   res.render('airtime');
 });
 
 
 
 //buy airtime route
-router.get('/airtime/verify', async (req, res) => {
+router.get('/airtime/verify', ensureAuthenticated, async (req, res) => {
   const { transaction_id } = req.query;
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
   const response = await axios({
@@ -56,7 +57,7 @@ router.get('/airtime/verify', async (req, res) => {
         }${date.getMinutes()}`;
         const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
         const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`;
-        res.send(`you have been saved to the database ${payerOne.full_name}`);
+        res.send(`transaction successful ${payerOne.full_name}`);
         buy_airtime(
           requestId,
           service_id,
