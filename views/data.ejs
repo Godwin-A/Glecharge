@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buy your data with Glecharge</title>
-</head>
-<body>
+<%- include("partials/header") %>
+
+<div class="container" id="buyform">
+  <h1 style="text-align: center;">Purchase Mobile Data</h1>
   <form action="/data/approved" method="post">
     <script src="https://checkout.flutterwave.com/v3.js"></script>
-    
-    <input id="email" type="email" name="email" placeholder="e.g johndoe@gmail.com" required>
-    <input id="name" type="text" name="full_name" placeholder="e.g John Doe"  required>
-    <input type="tel" name="phone" placeholder="phone number here" id="phone" required>
+    <label class="form-label">Email</label>
+    <input class="form-control" id="email" type="email" name="email" placeholder="e.g johndoe@gmail.com" required>
+    <label class="form-label" for="name">Full Name</label>
+    <input class="form-control" id="name" type="text" name="full_name" placeholder="e.g John Doe"  required>
+    <label class="form-label" for="phone">Phone Number</label>
+    <input class="form-control" type="tel" name="phone" placeholder="phone number here" id="phone" required>
 
-
-      <select name="operators" id="operators">
-        <option value="disabled seleted" > choose your network operator</option>
+      <label for="operators" class="form-label">Network</label>
+      <select class="form-control" name="operators" id="operators">
+        <option value="" disabled > choose your network operator</option>
         <option id="mtn" value="mtn-data"> MTN  </option>
           <option id="glo" value="glo-data"> Glo </option>
           <option id="airtel" value="airtel-data"> Airtel </option>
           <option id="etisalat" value="etisalat-data"> Etisalat </option>
       </select>
 
-        <label for="network">Choose a network:</label>
-        <select name="network" id="network">
+        <label for="network" class="form-label">Select a Plan</label>
+        <select class="form-control" name="network" id="network">
           <optgroup id="mtnown" label="MTN data options" hidden>
             <option variation_code="mtn-10mb-100" value="100">N100 100MB - 24 hrs</option>
             <option  variation_code="mtn-50mb-200" value="200">N200 200MB - 2 days</option>
@@ -45,11 +42,11 @@
           </optgroup>
         </select>
 
-    <button type="button" onClick="makePayment()">Buy data now</button>
+    <button class="btn btn-block btn-dark mt-3 mb-2" style="width: 100%;" type="button" onClick="makePayment()">Buy data now</button>
   </form>
-</body>
+</div>
 <script src="../public/script/data.js" ></script>
-</html>
+<%- include("partials/footer") %>
 <script>
   function makePayment() {
     const phone_number = document.getElementById('phone').value

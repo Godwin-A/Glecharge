@@ -4,6 +4,7 @@ const buy_tv   = require('../utils/buy_tv')
 const btoa = require('btoa');
 const axios = require('axios').default;
 const mongoose = require('mongoose');
+const fetch =  require('node-fetch');
 const Payer = require('../models/payer');
 const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 

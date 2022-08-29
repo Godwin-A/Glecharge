@@ -1,31 +1,28 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Buy airtime with glecharge</title>
- </head>
- <body>
-  
-        
+<%- include("partials/header") %>
+
+<div class="container" id="buyform">
+  <h1 style="text-align: center;">Purchase Airtime</h1>
   <form>
     <script src="https://checkout.flutterwave.com/v3.js"></script>
-    <input id="email" type="email" name="email" placeholder="e.g johndoe@gmail.com" required>
-    <input id="amount" type="tel" name="amount" placeholder="amount here" required>
-    <select id="service_id">
+    <label class="form-label" for="email">Email</label>
+    <input  class="form-control" id="email" type="email" name="email" placeholder="e.g johndoe@gmail.com" required>
+    <label class="form-label" for="amount">Amount</label>
+    <input class="form-control" id="amount" type="tel" name="amount" placeholder="amount here" required>
+    <label class="form-label" for="service_id">Network</label>
+    <select class="form-control" id="service_id">
       <option value="" disabled>select network </option>
       <option value="mtn">MTN</option>
       <option value="glo">GLO</option>
       <option value="airtel">AIRTEL</option>
       <option value="9mobile">9 MOBILE</option>
     </select>
-    <input id="name" type="text" name="full_name" placeholder="e.g John Doe" required>
-    <input type="tel" name="phone" placeholder="phone number here" id="phone" required>
-    <button type="button" onClick="makePayment()">Pay Now</button>
+    <label for="name" class="form-label">Full Name</label>
+    <input class="form-control" id="name" type="text" name="full_name" placeholder="e.g John Doe" required>
+    <label for="phone" class="form-label">Phone Number</label>
+    <input class="form-control" type="tel" name="phone" placeholder="phone number here" id="phone" required>
+    <button type="button" class="btn btn-block btn-dark mt-3 mb-2" style="width: 100%;"  onClick="makePayment()">Pay Now</button>
   </form>
-
-        
+</div>        
 
   <script>
     function makePayment() {
@@ -65,7 +62,4 @@
     }
   </script>
 
- </body>
- </html>
-
-
+ <%- include("partials/footer") %>

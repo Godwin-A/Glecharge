@@ -1,22 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>But TV subscription here</title>
-</head>
-<body>
-     <form action="/verify_smartcard" method="post">
-      <input type="tel" name="card" placeholder="enter smart card number">
-      <select name="serviceID" id="">
+<%- include("partials/header") %>
+  <div class="container" id="buyform">
+    <h1 style="text-align: center;">Purchase Tv Subsription</h1>
+    <form action="/verify_smartcard" method="post">
+      <label class="form-label" for="cardnum">Card Number</label>
+      <input class="form-control" type="tel" name="card" id="cardnum" placeholder="enter smart card number">
+      <label class="form-label" for="serviceID">Select a service</label>
+      <select class="form-control" name="serviceID" id="serviceID">
         <option value="dstv">DSTV</option>
         <option value="gotv">GOTV</option>
         <option value="startimes">STARTIMES</option>
       </select>
-      <button type="submit">Continue</button>
+      <button class="btn btn-dark btn-block mt-3 mb-2" style="width: 100%;" type="submit">Continue</button>
      </form>
+  </div>
+     
 
-
-</body>
-</html>
+<%- include("partials/footer") %>

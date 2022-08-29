@@ -8,7 +8,7 @@ const Payer = require('../models/payer');
 const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
 
 
-router.get('/home',forwardAuthenticated , (req, res)=>{
+router.get('/home', (req, res)=>{
   res.render('home')
 })
 

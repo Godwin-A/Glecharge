@@ -1,35 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>buy electricity with Glecharge</title>
-</head>
-<body>
+<%- include("partials/header") %>
+<div class="container" id="buyform">
   <form action="/data/approved" method="post">
     <script src="https://checkout.flutterwave.com/v3.js"></script>
-    <label for="Customer_Name">customer</label>
-    <input type="text" name="Customer_Name" id="Customer_Name" value=" <%= Customer_Name %>" ><br>
-    <label for="MeterNumber">meter_number</label>
-    <input type="tel" name="MeterNumber" id="MeterNumber" value=" <%= MeterNumber %>" ><br>
-    <label for="Address">Address</label>
-    <input type="text" name="Address" id="Address" value=" <%= Address %>" ><br>
-    <label for="Meter_Type">Meter_Type</label>
-    <input type="text" name="Meter_Type" id="Meter_Type" value=" <%= Meter_Type %>" ><br>
-    <label for="email">Email</label>
-    <input type="text" name="email" id="email" placeholder="email here" ><br>
-    <label for="amount">Amount</label>
-    <input type="number" name="amount" id="amount" placeholder="amount here" ><br>
-    <label for="phone">Phone</label>
-    <input type="tel" name="phone" id="phone" placeholder="phone here" ><br>
-    <label for="service_id" hidden>service_id</label>
-    <input type="text" name="service_id" id="service_id" value=" <%= service_id %>" hidden >
-    <button type="button" onClick="makePayment()"> pay now !</button>
+    <label class="form-label" for="Customer_Name">Customer Name</label>
+    <input class="form-control" disabled type="text" name="Customer_Name" id="Customer_Name" value=" <%= Customer_Name %>" ><br>
+    <label class="form-label" for="MeterNumber">Meter Number</label>
+    <input class="form-control" disabled type="tel" name="MeterNumber" id="MeterNumber" value=" <%= MeterNumber %>" ><br>
+    <label class="form-label" for="Address">Address</label>
+    <input class="form-control" disabled type="text" name="Address" id="Address" value=" <%= Address %>" ><br>
+    <label class="form-label" for="Meter_Type">Meter_Type</label>
+    <input class="form-control" disabled type="text" name="Meter_Type" id="Meter_Type" value=" <%= Meter_Type %>" ><br>
+    <label class="form-label" for="email">Email</label>
+    <input class="form-control" type="text" name="email" id="email" placeholder="email here" ><br>
+    <label class="form-label" for="amount">Amount</label>
+    <input class="form-control" type="number" name="amount" id="amount" placeholder="amount here" ><br>
+    <label class="form-label" for="phone">Phone</label>
+    <input class="form-control" type="tel" name="phone" id="phone" placeholder="phone here" ><br>
+    <label class="form-label" for="service_id" hidden>service_id</label>
+    <input class="form-control" disabled type="text" name="service_id" id="service_id" value=" <%= service_id %>" hidden >
+    <button class="btn btn-block btn-dark mt-3 mb-2" style="width: 100%;" type="button" onClick="makePayment()"> pay now !</button>
   </form>
-</body>
-</html>
-
+</div>
+<%- include("partials/footer") %>
 <script>
   
   function makePayment() {
@@ -67,8 +59,8 @@
         // close modal
       },
       customizations: {
-        title: "Pay for your data Here",
-        description: "data Payment",
+        title: "Pay for your Airtime Here",
+        description: "Airtime Payment",
         logo: "https://cdn.iconscout.com/icon/premium/png-256-thumb/payment-2193968-1855546.png",
       },
     });

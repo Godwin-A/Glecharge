@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 // Routes 
 const airtime_route = require('./routes/airtime')
 const data_route    = require('./routes/data')
-const tv_route      = require('./routes/power')
+const tv_route      = require('./routes/tv')
 const power_route   = require('./routes/power')
 const home_route    = require('./routes/home')
 const jamb_route    = require('./routes/jamb')

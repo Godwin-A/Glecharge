@@ -1,0 +1,12 @@
+body{
+    background-image: url("./wallpaperflare.com_wallpaper\ \(14\).jpg");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#homeCont{
+    margin: 40vh auto;
+    text-align: center;
+}
