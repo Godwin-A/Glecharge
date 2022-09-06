@@ -6,6 +6,9 @@ const flash = require('connect-flash');
 // Load User model
 const User = require('../models/user');
 const { forwardAuthenticated } = require('../config/auth');
+const mail = require('../utils/nodemailer')
+
+
 
 // Login Page
 router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
@@ -67,7 +70,11 @@ router.post('/register', (req, res) => {
                   'success_msg',
                   'You are now registered and can log in'
                 );
+                const subject = 'successful registration chief , welcome to glecharge '
+                const text = ' we are glad to have you as a user, hope you have the best service yet and a wonderful experience'
+                const mailer =  mail (newUser.email, subject, text )
                 res.redirect('/home');
+
               })
               .catch(err => console.log(err));
           });
