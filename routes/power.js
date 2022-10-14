@@ -7,7 +7,11 @@ const mongoose = require('mongoose');
 const Payer = require('../models/payer');
 const fetch =  require('node-fetch');
 const { forwardAuthenticated , ensureAuthenticated } = require('../config/auth');
-
+const User = require('../models/user');
+const updateWallet = require('../utils/updateWallet')
+const createWalletTransaction = require('../utils/createWalletTransaction')
+const createTransaction = require('../utils/createTransaction')
+const verifyWallet = require('../utils/validateWalllet')
 // electricity route
 router.get('/merchant/verify',ensureAuthenticated, function (req, res) {
   res.render('power');
@@ -75,12 +79,13 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         number: response.data.data.customer.phone_number,
       };
       console.log(payerDetails);
+      //TRIM FOR PROPER INPUT !!
       const service_id = response.data.data.meta.service_id.trim();
       const MeterNumber = response.data.data.meta.MeterNumber.trim();
       const Address = response.data.data.meta.Address;
       const Meter_Type = response.data.data.meta.Meter_Type;
       const variation_code = Meter_Type.toLowerCase().trim();
-      // console.log(`take a look at the meter number  and customer name -- ${MeterNumber} and ${payerDetails.full_name} and ${service_id}`)
+    
       const payerOne = new Payer(payerDetails);
       await payerOne.save();
       if (payerOne) {
@@ -102,7 +107,14 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
         const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`;
         let phone = Number(payerDetails.number);
-        // console.log(requestId,Meter_Type, MeterNumber,payerDetails.amount,service_id, payerDetails.number)
+        const payerEmail = payerDetails.email
+      const user = await User.findOne({ email:payerEmail })
+      console.log(user._id)
+      console.log(payerEmail)
+      const wallet = await verifyWallet(user._id)
+    await createWalletTransaction(user._id, status='successful', payerDetails.amount);
+    await createTransaction(user._id, transaction_id, status='successful', payerDetails.amount, payerDetails);
+    await updateWallet(user._id, payerDetails.amount);
         const result = await buy_electricity(
           requestId,
           variation_code,
@@ -111,6 +123,8 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
           service_id,
           payerDetails.number
         );
+
+        console.log(result)
         const token = result.Token;
         console.log(token);
         res.render('show_token', { token });

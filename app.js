@@ -11,7 +11,13 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static('public'));
 require('./config/passport')(passport);
 const { forwardAuthenticated , ensureAuthenticated } = require('./config/auth');
-const dotenv    =   require('dotenv');
+const dotenv = require('dotenv');
+const User = require('./models/user');
+
+const Wallet = require('./models/wallet')
+const WalletTransaction = require('./models/wallet_transaction')
+const Transaction = require('./models/transaction')
+
 dotenv.config();
 const db = process.env.DB_PASS
 mongoose
@@ -49,6 +55,8 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+
 // Routes 
 const airtime_route = require('./routes/airtime')
 const data_route    = require('./routes/data')
@@ -56,7 +64,8 @@ const tv_route      = require('./routes/tv')
 const power_route   = require('./routes/power')
 const home_route    = require('./routes/home')
 const jamb_route    = require('./routes/jamb')
-const user_route    = require('./routes/user')
+const user_route    = require('./routes/user');
+
 // use routes 
 app.use('/', airtime_route);
 app.use('/', data_route);

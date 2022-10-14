@@ -1,7 +1,7 @@
 {
-  "name": "workspace",
+  "name": "glecharge",
   "version": "1.0.0",
-  "description": "",
+  "description": "this is an utility payment platform with nodejs and flutterwave\r And it also utilizes the vtpass API for its core functionalities and services\r Visit vtpass.com to know more",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -33,5 +33,18 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.0.0",
     "request": "^2.88.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Godwin-A/Glecharge.git"
+  },
+  "keywords": [
+    "utility",
+    "payments",
+    "nodejs"
+  ],
+  "bugs": {
+    "url": "https://github.com/Godwin-A/Glecharge/issues"
+  },
+  "homepage": "https://github.com/Godwin-A/Glecharge#readme"
 }
