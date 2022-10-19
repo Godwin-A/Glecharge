@@ -8,7 +8,7 @@ module.exports = async (userId, amount) => {
       // update wallet
       const wallet = await Wallet.findOneAndUpdate(
         { userId },
-        { $inc: { balance: amount } },
+        {  balance: amount  },
         { new: true }
       );
       return wallet;

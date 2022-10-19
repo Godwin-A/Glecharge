@@ -17,7 +17,8 @@ const User = require('./models/user');
 const Wallet = require('./models/wallet')
 const WalletTransaction = require('./models/wallet_transaction')
 const Transaction = require('./models/transaction')
-
+const verifyWallet = require('./utils/validateWalllet')
+const updateWallet = require('./utils/updateWallet')
 dotenv.config();
 const db = process.env.DB_PASS
 mongoose
@@ -65,6 +66,7 @@ const power_route   = require('./routes/power')
 const home_route    = require('./routes/home')
 const jamb_route    = require('./routes/jamb')
 const user_route    = require('./routes/user');
+const { rearg } = require('lodash');
 
 // use routes 
 app.use('/', airtime_route);
@@ -75,6 +77,52 @@ app.use('/', home_route);
 app.use('/', jamb_route);
 app.use ('/', user_route)
 
+app.post('/transfer-funds', async(req, res)=>{
+  const {userEmail , amount , recipient, recipientEmail}  = req.body
+  // first thing is to make sure that the wallet exists
+  const customer = await User.findOne({email:userEmail})
+  const user = await Wallet.findOne({userId:customer._id})
+  console.log(`user wallet found ${user}`)
+  const sender = await verifyWallet(user.userId)
+  console.log('verified sender wallet ')
+  console.log(`this is the sender wallet ${sender}`)
+  console.log(`this is the sender balance before transaction ${sender.balance}`)
+  // then make sure the money to be transferred is up to expected amount 
+    if(sender.balance >= amount){
+      try {
+        console.log('inside the wallet conditions code now ')
+         // then verify the recipients account number
+         const receiver =  await Wallet.findOne({accountNumber: recipient })
+         if(receiver){
+            // do the transfer 
+           //debit the sender
+           console.log(`recepient is found  and verified ${receiver}`)
+           const debit = sender.balance - amount 
+           console.log( `the sender has been debited ${amount } and  ${debit} is left`)
+        const senderWalletBalance =   await updateWallet(user.userId, debit);
+        console.log(`sender wallet balance is ${senderWalletBalance.balance}`)
+         //Update / credit the receiver 
+        const credit = Number(receiver.balance) + Number(amount)  
+        const receiving =  await  User.findOne({email:recipientEmail })
+        const recipientWallet = await verifyWallet(receiving._id)
+        const recipientWalletBalance = await updateWallet(receiving._id, credit)
+        console.log(recipientWalletBalance, senderWalletBalance )
+        res.send('TRANSACTION SUCCESSFULL!!!')
+         }
+      } catch (error) {
+         console.log(`Something went wrong  ${error}`) 
+      }
+       
+    }else{
+      console.log(' insufficient funds, please fund your wallet ')
+    }
+})
+
+
+
+app.post('/fund-wallet', (req, res)=>{
+  // fund wallet route !!
+})
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, function () {
