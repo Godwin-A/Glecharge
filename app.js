@@ -84,29 +84,21 @@ app.post('/transfer-funds', async(req, res)=>{
   const user = await Wallet.findOne({userId:customer._id})
   console.log(`user wallet found ${user}`)
   const sender = await verifyWallet(user.userId)
-  console.log('verified sender wallet ')
-  console.log(`this is the sender wallet ${sender}`)
-  console.log(`this is the sender balance before transaction ${sender.balance}`)
   // then make sure the money to be transferred is up to expected amount 
     if(sender.balance >= amount){
       try {
-        console.log('inside the wallet conditions code now ')
          // then verify the recipients account number
          const receiver =  await Wallet.findOne({accountNumber: recipient })
          if(receiver){
             // do the transfer 
            //debit the sender
-           console.log(`recepient is found  and verified ${receiver}`)
            const debit = sender.balance - amount 
-           console.log( `the sender has been debited ${amount } and  ${debit} is left`)
         const senderWalletBalance =   await updateWallet(user.userId, debit);
-        console.log(`sender wallet balance is ${senderWalletBalance.balance}`)
          //Update / credit the receiver 
         const credit = Number(receiver.balance) + Number(amount)  
         const receiving =  await  User.findOne({email:recipientEmail })
         const recipientWallet = await verifyWallet(receiving._id)
         const recipientWalletBalance = await updateWallet(receiving._id, credit)
-        console.log(recipientWalletBalance, senderWalletBalance )
         res.send('TRANSACTION SUCCESSFULL!!!')
          }
       } catch (error) {
@@ -115,6 +107,7 @@ app.post('/transfer-funds', async(req, res)=>{
        
     }else{
       console.log(' insufficient funds, please fund your wallet ')
+      res.send('you dont have sufficient funds in your wallet ,please fund it now ')
     }
 })
 
@@ -122,6 +115,9 @@ app.post('/transfer-funds', async(req, res)=>{
 
 app.post('/fund-wallet', (req, res)=>{
   // fund wallet route !!
+  // get req body 
+  const {} = req.body 
+
 })
 
 const PORT = process.env.PORT || 5000;
