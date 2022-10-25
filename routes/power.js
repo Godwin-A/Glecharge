@@ -78,7 +78,6 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         amount: response.data.data.amount,
         number: response.data.data.customer.phone_number,
       };
-      console.log(payerDetails);
       //TRIM FOR PROPER INPUT !!
       const service_id = response.data.data.meta.service_id.trim();
       const MeterNumber = response.data.data.meta.MeterNumber.trim();
@@ -109,8 +108,6 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         let phone = Number(payerDetails.number);
         const payerEmail = payerDetails.email
       const user = await User.findOne({ email:payerEmail })
-      console.log(user._id)
-      console.log(payerEmail)
       const wallet = await verifyWallet(user._id)
     await createWalletTransaction(user._id, status='successful', payerDetails.amount);
     await createTransaction(user._id, transaction_id, status='successful', payerDetails.amount, payerDetails);
@@ -123,10 +120,8 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
           service_id,
           payerDetails.number
         );
-
-        console.log(result)
         const token = result.Token;
-        console.log(token);
+        console.log(req.user)
         res.render('show_token', { token });
       } else {
         console.log('there was an error');

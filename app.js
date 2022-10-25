@@ -13,7 +13,7 @@ require('./config/passport')(passport);
 const { forwardAuthenticated , ensureAuthenticated } = require('./config/auth');
 const dotenv = require('dotenv');
 const User = require('./models/user');
-
+const axios = require('axios').default;
 const Wallet = require('./models/wallet')
 const WalletTransaction = require('./models/wallet_transaction')
 const Transaction = require('./models/transaction')
@@ -111,15 +111,60 @@ app.post('/transfer-funds', async(req, res)=>{
     }
 })
 
+app.get('/wallet-fund', async(req, res)=>{
+  res.render('fund-wallet')
+})
 
-
-app.post('/fund-wallet', (req, res)=>{
+app.get('/fund-wallet', async(req, res)=>{
   // fund wallet route !!
-  // get req body 
-  const {} = req.body 
+
+  const { transaction_id } = req.query;
+  const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
+  const response = await axios({
+    url,
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `FLWSECK_TEST-cfb4553d9ad6e8573502240f1258b60a-X`,
+    },
+  });
+  if (response) {
+    try {
+      const walletFunder = {
+        email: response.data.data.customer.email,
+        reference: response.data.data.tx_ref,
+        amount: response.data.data.amount,
+        number: response.data.data.customer.phone_number,
+      };
+  const userEmail = walletFunder.email
+      const user =  await User.findOne({email:userEmail})
+      console.log('user found , moving onto wallet verification')
+
+      const UserWalletId = user._id 
+      console.log(UserWalletId)
+      const userWallet = await verifyWallet(UserWalletId)
+      console.log(`user wallet found ${userWallet}`)
+   const fundedBalance =   Number(userWallet.balance) + Number(walletFunder.amount)
+    console.log(`${fundedBalance}`)
+    const fundedWallet = await updateWallet(UserWalletId, fundedBalance)
+    console.log(fundedWallet)
+     res.redirect('/home')
+    } catch (error) {
+      console.log(`invalid credentials ${error}`);
+    }
+  }else{
+    console.log('no response received')
+    res.send('No Response Provided')
+  }
 
 })
 
+
+// app.get('/', async (req, res)=>{
+//   res.send('')
+
+// })
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, function () {
   console.log(`server started in port ${PORT}`);
