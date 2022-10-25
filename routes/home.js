@@ -23,7 +23,7 @@ router.get('/home',  async(req, res)=>{
       console.log(`${error}`)
     }
   }else{
-     res.render('home')
+     res.render('home', {wallet:'Login to view funds'})
   }
 })
 
