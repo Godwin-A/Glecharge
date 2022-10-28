@@ -59,10 +59,10 @@ router.post('/merchant/data', async (req, res) => {
   }
 });
 
-router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
+router.post('/buy_electricity', ensureAuthenticated,  async (req, res) => {
   const realUserEmail = req.user.email 
-  const { MeterNumber , Meter_Type,  amount, phone, service_id } = req.query;
-  console.log('this is the service id '+ req.query)
+  const { MeterNumber , Meter_Type,  amount, phone, service_id } = req.body;
+  console.log('this is the service id '+ req.body.Meter_Type)
       const user = await User.findOne({email:realUserEmail})
       if (user) {
         try {
@@ -91,10 +91,13 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
       try {
         const walletBalance = Number(wallet.balance) - Number(amount)  
         await updateWallet(user._id, walletBalance);
+        const meterType = Meter_Type.toString().toLowerCase().trim()
+        console.log(meterType)
+        console.log(MeterNumber)
         const result = await buy_electricity(
           requestId,
-          Meter_Type,
-          MeterNumber,
+          meterType,
+          MeterNumber.trim(),
           amount,
           service_id,
           phone
@@ -103,9 +106,11 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         console.log(result, token)
           res.render('show_token', { token });
       } catch (error) {
-        console.log(`insufficient funds in wallet ${error}` )
+        console.log(`there was an error  ${error}` )
       }
   
+    }else{
+      res.send('insufficient fund in wallet, fund wallet now ')
     }
         } catch (error) {
           console.log(`there was an error ${error}`)

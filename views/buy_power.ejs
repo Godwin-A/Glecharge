@@ -1,7 +1,7 @@
 <%- include("partials/header") %>
 <div class="container" id="buyform">
-  <form action="/buy_electricity" method="get">
-    <label class="form-label" for="Customer_Name">Customer Name</label>
+  <form action="/buy_electricity" method="post">
+    <label class="form-label" for="Customer_Name"> Customer Name</label>
     <input class="form-control"  type="text" name="Customer_Name" id="Customer_Name" value=" <%= Customer_Name %>" required><br>
     <label class="form-label" for="MeterNumber">Meter Number</label>
     <input class="form-control"  type="tel" name="MeterNumber" id="MeterNumber" value=" <%= MeterNumber %>" required><br>
