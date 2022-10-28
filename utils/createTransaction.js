@@ -3,15 +3,15 @@ const WalletTransaction = require('../models/wallet_transaction')
 const Transaction = require('../models/transaction')
 
 // Create Transaction
-module.exports = async ( userId, id, status, amount, customer) => {
+module.exports = async ( userId, id,phone,email, status, amount) => {
     try {
       // create transaction
       const transaction = await Transaction.create({
         userId,
         transactionId: id,
-        name: customer.full_name,
-        email: customer.email,
-        phone: customer.number,
+        name: customer,
+        email: email,
+        phone: phone,
         amount,
         currency:'NGN',
         paymentStatus: status,

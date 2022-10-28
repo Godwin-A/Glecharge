@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+router.use(express.urlencoded({ extended: true }));
+router.use(express.json({ extended: true }));
 const buy_electricity = require('../utils/electricity');
 const btoa = require('btoa');
 const axios = require('axios').default;
@@ -58,37 +60,13 @@ router.post('/merchant/data', async (req, res) => {
 });
 
 router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
-  const { transaction_id } = req.query;
-  const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
-  const response = await axios({
-    url,
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `FLWSECK_TEST-cfb4553d9ad6e8573502240f1258b60a-X`,
-    },
-  });
-  if (response) {
-    try {
-      const payerDetails = {
-        full_name: response.data.data.customer.name,
-        reference: response.data.data.tx_ref,
-        email: response.data.data.customer.email,
-        amount: response.data.data.amount,
-        number: response.data.data.customer.phone_number,
-      };
-      //TRIM FOR PROPER INPUT !!
-      const service_id = response.data.data.meta.service_id.trim();
-      const MeterNumber = response.data.data.meta.MeterNumber.trim();
-      const Address = response.data.data.meta.Address;
-      const Meter_Type = response.data.data.meta.Meter_Type;
-      const variation_code = Meter_Type.toLowerCase().trim();
-    
-      const payerOne = new Payer(payerDetails);
-      await payerOne.save();
-      if (payerOne) {
-        const min = 10000;
+  const realUserEmail = req.user.email 
+  const { MeterNumber , Meter_Type,  amount, phone, service_id } = req.query;
+  console.log('this is the service id '+ req.query)
+      const user = await User.findOne({email:realUserEmail})
+      if (user) {
+        try {
+          const min = 10000;
         const max = 99999;
         const num = Math.floor(Math.random() * (max - min + 1)) + min;
         const date = new Date();
@@ -105,31 +83,38 @@ router.get('/buy_electricity', ensureAuthenticated,async (req, res) => {
         }${date.getMinutes()}`;
         const daten = `${date.getDate() < 10 ? '0' : ''}${date.getDate()}`;
         const requestId = `${year}${month}${daten}${hour}${minutes}${seconds}${num}`;
-        let phone = Number(payerDetails.number);
-        const payerEmail = payerDetails.email
-      const user = await User.findOne({ email:payerEmail })
       const wallet = await verifyWallet(user._id)
-    await createWalletTransaction(user._id, status='successful', payerDetails.amount);
-    await createTransaction(user._id, transaction_id, status='successful', payerDetails.amount, payerDetails);
-    await updateWallet(user._id, payerDetails.amount);
+      console.log(`this is the user wallet ${wallet}`)
+    // await createWalletTransaction(user._id, status='successful',amount);
+    // await createTransaction(user._id, transaction_id, status='successful', amount, customer);
+    if(wallet.balance >= amount){
+      try {
+        const walletBalance = Number(wallet.balance) - Number(amount)  
+        await updateWallet(user._id, walletBalance);
         const result = await buy_electricity(
           requestId,
-          variation_code,
+          Meter_Type,
           MeterNumber,
-          payerDetails.amount,
+          amount,
           service_id,
-          payerDetails.number
+          phone
         );
         const token = result.Token;
-        console.log(req.user)
-        res.render('show_token', { token });
-      } else {
-        console.log('there was an error');
+        console.log(result, token)
+          res.render('show_token', { token });
+      } catch (error) {
+        console.log(`insufficient funds in wallet ${error}` )
       }
-    } catch (error) {
-      console.log(`its not you, its us, sorry for the error ${error}`);
+  
     }
-  }
+        } catch (error) {
+          console.log(`there was an error ${error}`)
+        }
+        
+      } else{
+        res.send('there is no user for this email address')
+      }
+ 
 });
 
 
